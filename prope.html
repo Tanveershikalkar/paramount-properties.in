@@ -1,0 +1,484 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Paramount Properties — Search Listings</title>
+
+  <!-- Poppins font -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root{
+      --primary:#0b4b9b;
+      --accent:#c69b07;
+      --muted:#6b7280;
+      --bg:#f4f7fb;
+      --card:#ffffff;
+      --radius:12px;
+      --maxw:1200px;
+    }
+    *{box-sizing:border-box}
+    body{font-family:'Poppins',system-ui,Arial; margin:0;background:var(--bg);color:#081224;-webkit-font-smoothing:antialiased}
+    .container{max-width:var(--maxw);margin:0 auto;padding:14px}
+
+    /* Header */
+    header{background:linear-gradient(90deg,var(--primary),#06346c);color:#fff;padding:14px 0;box-shadow:0 8px 30px rgba(5,20,60,0.12)}
+    .nav{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px}
+    .brand{display:flex;gap:12px;align-items:center}
+    .brand .logo{background:#fff;padding:8px;border-radius:8px;color:var(--primary);font-weight:800}
+    .brand h1{margin:0;font-size:18px}
+
+    nav.menu{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
+    nav.menu a{color:#fff;text-decoration:none;font-weight:600;font-size:13px;padding:6px 10px;border-radius:6px}
+    nav.menu a:hover{background:rgba(255,255,255,0.12)}
+
+    .actions{display:flex;gap:10px;align-items:center}
+    .btn{padding:8px 12px;border-radius:8px;border:none;cursor:pointer;font-weight:600}
+    .btn-ghost{background:transparent;color:#fff;border:1px solid rgba(255,255,255,0.12)}
+    .btn-primary{background:var(--accent);color:#081224}
+
+    /* Hero */
+    .hero{margin-top:14px;background:linear-gradient(180deg, rgba(11,75,155,0.85), rgba(11,75,155,0.6)), url('https://images.unsplash.com/photo-1560184897-45e8d0f2f9b8?auto=format&fit=crop&w=1600&q=60') center/cover;padding:20px;border-radius:14px;color:#fff}
+    .hero h2{margin:0;font-size:20px}
+    .hero p{margin:6px 0 0 0;color:rgba(255,255,255,0.95);font-size:13px}
+
+    .search-row{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
+    .input, select {padding:10px;border-radius:8px;border:none;font-size:14px;flex:1;min-width:120px}
+    .search-btn{padding:10px 16px;border-radius:8px;background:var(--accent);border:none;font-weight:700;color:#081224;cursor:pointer}
+
+    /* Layout */
+    .layout{display:grid;grid-template-columns:320px 1fr;gap:16px;margin-top:14px}
+    @media(max-width:980px){ .layout{grid-template-columns:1fr} }
+    .panel{background:var(--card);padding:14px;border-radius:12px;box-shadow:0 8px 24px rgba(10,20,40,0.04)}
+
+    /* Filters */
+    .filters h3{margin:0 0 8px 0}
+    .field{margin-bottom:10px}
+    label{display:block;font-size:13px;color:var(--muted);margin-bottom:6px}
+    select,input[type="number"]{width:100%;padding:10px;border-radius:8px;border:1px solid #eef2f6}
+
+    /* Listings */
+    .results-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+    .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px}
+
+    .card{border-radius:12px;overflow:hidden;background:#fff;box-shadow:0 6px 18px rgba(12,24,60,0.06);display:flex;flex-direction:column}
+    .card .media{height:160px;overflow:hidden}
+    .card img{width:100%;height:100%;object-fit:cover}
+    .card .body{padding:12px;display:flex;flex-direction:column;gap:6px;flex:1}
+    .title{font-weight:700;font-size:15px}
+    .meta{font-size:13px;color:var(--muted)}
+    .price{font-weight:800;color:var(--primary)}
+    .cta{display:flex;gap:8px;margin-top:auto}
+    .cta button{flex:1;padding:10px;border-radius:8px;border:none;cursor:pointer}
+    .view{background:#f1f7ff;color:var(--primary);font-weight:700}
+    .enquiry{background:var(--primary);color:#fff;font-weight:700}
+
+    .empty{padding:22px;text-align:center;color:var(--muted)}
+
+    /* Modal */
+    .modal-backdrop{position:fixed;inset:0;background:rgba(3,6,20,0.5);display:none;align-items:center;justify-content:center;padding:14px;z-index:120}
+    .modal{width:100%;max-width:920px;background:white;border-radius:12px;padding:18px;box-shadow:0 20px 40px rgba(3,8,20,0.3);max-height:90vh;overflow:auto}
+    .gallery{display:flex;gap:12px}
+    .gallery .main{flex:1;height:320px;border-radius:8px;overflow:hidden;background:#f3f6fb}
+    .thumbs{display:flex;flex-direction:column;gap:8px;width:120px}
+    .thumbs img{width:100%;height:70px;object-fit:cover;border-radius:6px;cursor:pointer;border:2px solid transparent}
+    .thumbs img.active{border-color:var(--accent)}
+    .section-box{margin-top:12px;padding:12px;border-radius:8px;background:#f8fafc;border:1px solid #eef2f6}
+    .section-box h4{margin:0 0 6px 0}
+
+    footer{margin-top:20px;padding:12px;text-align:center;color:var(--muted);font-size:13px}
+
+    /* Mobile comfort tweaks */
+    @media(max-width:520px){
+      .brand h1{font-size:16px}
+      .search-row{flex-direction:column}
+      .input,select,.search-btn{min-width:0;width:100%}
+      .card img{height:200px}
+      .modal{padding:12px}
+      .gallery{flex-direction:column}
+      .thumbs{flex-direction:row;width:100%;overflow:auto}
+      .thumbs img{height:60px;width:auto}
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="container nav">
+      <div class="brand">
+        <div class="logo">PP</div>
+        <div>
+          <h1>Paramount Properties</h1>
+          <div style="font-size:12px;color:rgba(255,255,255,0.9)">Branded Builders Only</div>
+        </div>
+      </div>
+      <div class="actions">
+        <button class="btn btn-ghost" id="btn-login">Login</button>
+        <button class="btn btn-primary" id="btn-signup">Sign up</button>
+      </div>
+      <nav class="menu">
+        <a href="#">Home</a>
+        <a href="#">Buy</a>
+        <a href="#">Sell</a>
+        <a href="#">Rent</a>
+        <a href="#">New Launch</a>
+        <a href="#">Plots</a>
+        <a href="#contact">Contact Us</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="hero">
+      <h2>Search premium projects from trusted builders</h2>
+      <p>Filter by state, city, locality, budget and property type. Download brochure after login.</p>
+
+      <div class="search-row">
+        <input id="quickSearch" class="input" placeholder="Project, locality, or RERA no.">
+        <select id="stateSelect"><option value="">Select State</option></select>
+        <select id="citySelect"><option value="">Select City</option></select>
+        <select id="localitySelect"><option value="">Locality</option></select>
+        <button class="search-btn" id="btnSearch">Search</button>
+      </div>
+    </section>
+
+    <div class="layout">
+      <aside class="panel filters" aria-label="Filters">
+        <h3>Filters</h3>
+
+        <div class="field">
+          <label>Property Type</label>
+          <select id="typeFilter">
+            <option value="">All</option>
+            <option>Residential</option>
+            <option>Commercial</option>
+            <option>Villa</option>
+            <option>Plot</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label>Configuration</label>
+          <select id="configFilter">
+            <option value="">Any</option>
+            <option>1 BHK</option>
+            <option>2 BHK</option>
+            <option>3 BHK</option>
+            <option>4+ BHK</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label>Budget (max) — Lakhs</label>
+          <div class="range-row">
+            <input id="budgetRange" type="range" min="10" max="5000" step="10" value="500">
+            <div class="chip" id="budgetChip">₹ 500L+</div>
+          </div>
+        </div>
+
+        <div style="display:flex;gap:8px;margin-top:8px">
+          <button class="btn btn-primary" id="applyBtn">Apply</button>
+          <button class="btn" id="clearBtn">Clear</button>
+        </div>
+
+        <hr style="margin:12px 0;border:none;border-top:1px solid #f0f3f8" />
+        <div class="tiny" style="color:var(--muted)">Only branded builder projects are shown. Admin-approved listings are prioritized.</div>
+      </aside>
+
+      <section class="panel results">
+        <div class="results-header">
+          <div>
+            <div style="font-weight:800">Properties</div>
+            <div class="tiny" id="countText" style="color:var(--muted)">Showing 0 properties</div>
+          </div>
+          <div style="display:flex;gap:8px;align-items:center">
+            <div class="tiny" style="color:var(--muted)">Sort</div>
+            <select id="sortSelect" style="padding:8px;border-radius:8px;border:1px solid #eef2f6">
+              <option value="new">Newest</option>
+              <option value="price-asc">Price: Low → High</option>
+              <option value="price-desc">Price: High → Low</option>
+            </select>
+          </div>
+        </div>
+
+        <div id="grid" class="grid"></div>
+        <div id="empty" class="empty" style="display:none">No results found for your filters.</div>
+      </section>
+    </div>
+
+    <footer id="contact">© 2025 Paramount Properties — Contact: +91-XXXXXXXXXX • info@paramount.example</footer>
+  </main>
+
+  <!-- Modal -->
+  <div id="modalBackdrop" class="modal-backdrop" aria-hidden="true">
+    <div id="modal" class="modal"></div>
+  </div>
+
+  <script>
+    /* ---------- DATA: states -> cities -> main localities (expanded for major metros) ---------- */
+    const LOCATION_DATA = {
+      "Maharashtra": {
+        "Mumbai": ["Worli","Bandra","Juhu","Lower Parel","Andheri","Powai","Mulund"],
+        "Pune": ["Hinjewadi","Kharadi","Wakad","Viman Nagar","Baner","Alandi"],
+        "Navi Mumbai": ["Vashi","Panvel","Kharghar"]
+      },
+      "Karnataka": {
+        "Bengaluru": ["Whitefield","Electronic City","Koramangala","Indiranagar","Hebbal","Yelahanka"]
+      },
+      "Tamil Nadu": {
+        "Chennai": ["OMR","Anna Nagar","Adyar","Velachery","Tambaram"]
+      },
+      "Telangana": {
+        "Hyderabad": ["Gachibowli","Banjara Hills","Hitech City","Kondapur","Madhapur"]
+      },
+      "Delhi": {
+        "New Delhi": ["Connaught Place","South Extension","Rajouri Garden"],
+        "Gurugram": ["DLF Phase 1","Sohna Road","Sector 56","MG Road"],
+        "Noida": ["Sector 18","Sector 62","Greater Noida"]
+      },
+      "West Bengal": {
+        "Kolkata": ["Salt Lake","New Town","Alipore","Behala"]
+      },
+      "Gujarat": {
+        "Ahmedabad": ["SG Highway","Satellite","Bodakdev"]
+      },
+      "Rajasthan": {
+        "Jaipur": ["Malviya Nagar","Tonk Road","Vaishali Nagar"]
+      },
+      "Uttar Pradesh": {
+        "Lucknow": ["Gomti Nagar","Alambagh"],
+        "Kanpur": ["Swaroop Nagar"]
+      },
+      "Punjab":{
+        "Chandigarh":["Sector 17","Panchkula"]
+      }
+    };
+
+    /* ---------- SAMPLE BUILDERS & 8-10 PROPS (demo) ---------- */
+    const BUILDERS = ["Kolte-Patil","Lodha","Godrej","Brigade","Mahindra Lifespaces","Tata Housing","Prestige","DLF","SOBHA","NCC" ];
+
+    const PROPS = [
+      { id:"p1", title:"Life Republic - Duet Phase 2", builder:"Kolte-Patil", state:"Maharashtra", city:"Pune", locality:"Hinjewadi", type:"Residential", config:"2 BHK", price_thousands:75000, size:"900 - 1250 sqft", rera:"P52100017116", images:["https://images.unsplash.com/photo-1565182999561-2f3b8b9df4f7?auto=format&fit=crop&w=1200&q=60","https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1200&q=60","https://images.unsplash.com/photo-1600585153985-3c64b6b6f8d6?auto=format&fit=crop&w=1200&q=60"], amenities:["Clubhouse","Gym","Pool"], brochure:"brochures/life_republic.pdf" },
+
+      { id:"p2", title:"Lodha Altamount Residences", builder:"Lodha", state:"Maharashtra", city:"Mumbai", locality:"Lower Parel", type:"Residential", config:"3 BHK", price_thousands:220000, size:"1500 - 2200 sqft", rera:"M50000098765", images:["https://images.unsplash.com/photo-1600585153887-6c2b0d7b8f9f?auto=format&fit=crop&w=1200&q=60","https://images.unsplash.com/photo-1570129477492-45c003edd2be?auto=format&fit=crop&w=1200&q=60"], amenities:["Rooftop Garden","Concierge"], brochure:"brochures/lodha_altamount.pdf" },
+
+      { id:"p3", title:"Godrej Business Park - Kharadi", builder:"Godrej", state:"Maharashtra", city:"Pune", locality:"Kharadi", type:"Commercial", config:"Office", price_thousands:120000, size:"2000 - 8000 sqft", rera:null, images:["https://images.unsplash.com/photo-1505691723518-36a5d3f0f6f9?auto=format&fit=crop&w=1200&q=60","https://images.unsplash.com/photo-1505692794403-3d0f3f3a0e0a?auto=format&fit=crop&w=1200&q=60"], amenities:["Power Backup","Car Park"], brochure:"brochures/godrej_business_park.pdf" },
+
+      { id:"p4", title:"Mahindra Manor Studios", builder:"Mahindra Lifespaces", state:"Karnataka", city:"Bengaluru", locality:"Whitefield", type:"Residential", config:"1 BHK", price_thousands:42000, size:"350 - 450 sqft", rera:"PRM/KA/RERA/1251/446/PR/171014/000423", images:["https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?auto=format&fit=crop&w=1200&q=60","https://images.unsplash.com/photo-1560449577-8f1b3f4c9b7b?auto=format&fit=crop&w=1200&q=60"], amenities:["Gym","CCTV"], brochure:"brochures/mahindra_manor.pdf" },
+
+      { id:"p5", title:"Tata Signature Villas - Alandi", builder:"Tata Housing", state:"Maharashtra", city:"Pune", locality:"Alandi", type:"Villa", config:"4+ BHK", price_thousands:350000, size:"3500 - 5200 sqft", rera:"P52100054321", images:["https://images.unsplash.com/photo-1598300057897-0b19f0e8e1e7?auto=format&fit=crop&w=1200&q=60","https://images.unsplash.com/photo-1580587771525-78b9dba3b914?auto=format&fit=crop&w=1200&q=60"], amenities:["Private Garden","Pool"], brochure:"brochures/tata_villas.pdf" },
+
+      { id:"p6", title:"Prestige Shantiniketan", builder:"Prestige Group", state:"Karnataka", city:"Bengaluru", locality:"Whitefield", type:"Residential", config:"2-4 BHK", price_thousands:150000, size:"1100 - 3000 sqft", rera:"PRM/KA/RERA/1251/446/PR/171014/000424", images:["https://images.unsplash.com/photo-1505691723518-36a5d3f0f6f9?auto=format&fit=crop&w=1200&q=60","https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?auto=format&fit=crop&w=1200&q=60","https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1200&q=60"], amenities:["Mall","School","Club"], brochure:"brochures/prestige_shantiniketan.pdf" },
+
+      { id:"p7", title:"DLF Cyber City Offices", builder:"DLF", state:"Delhi", city:"Gurugram", locality:"Cyber Hub", type:"Commercial", config:"Office", price_thousands:250000, size:"3000 - 12000 sqft", rera:"HRERA-GRG-PROJ-2018-02", images:["https://images.unsplash.com/photo-1505691723518-36a5d3f0f6f9?auto=format&fit=crop&w=1200&q=60","https://images.unsplash.com/photo-1524758631624-e2822e304c36?auto=format&fit=crop&w=1200&q=60"], amenities:["Grade A Offices","Food Court"], brochure:"brochures/dlf_cybercity.pdf" },
+
+      { id:"p8", title:"Sobha Royal Pavilion", builder:"SOBHA", state:"Karnataka", city:"Bengaluru", locality:"Hebbal", type:"Residential", config:"3-4 BHK", price_thousands:180000, size:"1400 - 2600 sqft", rera:"PRM/KA/RERA/1251/446/PR/171014/000425", images:["https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?auto=format&fit=crop&w=1200&q=60","https://images.unsplash.com/photo-1560184897-45e8d0f2f9b8?auto=format&fit=crop&w=1200&q=60"], amenities:["Luxury Club","Pool"], brochure:"brochures/sobha_royal.pdf" },
+
+      { id:"p9", title:"NCC Green Fields - Plots", builder:"NCC", state:"Rajasthan", city:"Jaipur", locality:"Tonk Road", type:"Plot", config:"Plot", price_thousands:12000, size:"1200 - 5000 sqft", rera:"RJ-RERA-PLT-2020-11", images:["https://images.unsplash.com/photo-1505691723518-36a5d3f0f6f9?auto=format&fit=crop&w=1200&q=60"], amenities:["Gated Community"], brochure:"brochures/ncc_plots.pdf" },
+
+      { id:"p10", title:"Mahindra New Launch - Orchard View", builder:"Mahindra Lifespaces", state:"Telangana", city:"Hyderabad", locality:"Gachibowli", type:"New Launch", config:"2-3 BHK", price_thousands:68000, size:"850 - 1400 sqft", rera:"TS-RERA-2024-9876", images:["https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1200&q=60","https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?auto=format&fit=crop&w=1200&q=60"], amenities:["Sky Lounge","Co-working"], brochure:"brochures/mahindra_orchard.pdf" }
+    ];
+
+    /* ---------- UI hooks ---------- */
+    const stateSel = document.getElementById('stateSelect');
+    const citySel = document.getElementById('citySelect');
+    const localitySel = document.getElementById('localitySelect');
+    const budgetRange = document.getElementById('budgetRange');
+    const budgetChip = document.getElementById('budgetChip');
+
+    function initLocationFilters(){
+      const states = Object.keys(LOCATION_DATA).sort();
+      stateSel.innerHTML = '<option value="">Select State</option>' + states.map(s=>`<option>${s}</option>`).join('');
+    }
+    initLocationFilters();
+
+    stateSel.addEventListener('change', ()=>{
+      const s = stateSel.value;
+      citySel.innerHTML = '<option value="">Select City</option>' + (s ? Object.keys(LOCATION_DATA[s]).map(c=>`<option>${c}</option>`).join('') : Object.keys(LOCATION_DATA).flatMap(k=>Object.keys(LOCATION_DATA[k])).filter((v,i,a)=>a.indexOf(v)===i).map(c=>`<option>${c}</option>`).join(''));
+      localitySel.innerHTML = '<option value="">Locality</option>';
+    });
+
+    citySel.addEventListener('change', ()=>{
+      const s = stateSel.value, c = citySel.value;
+      let locals = [];
+      if(s && c) locals = LOCATION_DATA[s][c] || [];
+      else if(c){ // find city across states
+        for(const st of Object.keys(LOCATION_DATA)){
+          if(LOCATION_DATA[st][c]){ locals = LOCATION_DATA[st][c]; break; }
+        }
+      }
+      localitySel.innerHTML = '<option value="">Locality</option>' + locals.map(l=>`<option>${l}</option>`).join('');
+    });
+
+    /* budget chip */
+    const budgetInput = document.getElementById('budgetRange');
+    if(budgetInput){ budgetInput.addEventListener('input', ()=>{ const v=Number(budgetInput.value); document.getElementById('budgetChip').textContent = v < 1000 ? `₹ ${v}L` : `₹ ${Math.round(v/100)/10}Cr+`; }); }
+
+    /* render list */
+    function formatPrice(k){ if(!k) return 'Contact'; if(k < 100000) return (k/1000).toLocaleString() + 'K'; if(k < 1000000) return ((k/1000)/10).toLocaleString() + 'L'; return (k/100000).toLocaleString() + 'Cr'; }
+
+    function renderList(list){
+      const grid = document.getElementById('grid'); grid.innerHTML = '';
+      const emptyEl = document.getElementById('empty'); const countText = document.getElementById('countText');
+      if(!list || list.length === 0){ emptyEl.style.display = 'block'; countText.textContent = 'Showing 0 properties'; return; }
+      emptyEl.style.display = 'none'; countText.textContent = `Showing ${list.length} properties`;
+
+      list.forEach(p=>{
+        const card = document.createElement('div'); card.className = 'card';
+        card.innerHTML = `
+          <div class="media"><img src="${p.images[0]}" alt="${p.title}"></div>
+          <div class="body">
+            <div class="title">${p.title}</div>
+            <div class="meta">${p.builder} • ${p.locality}, ${p.city}</div>
+            <div class="price">${p.type} • ₹ ${formatPrice(p.price_thousands)}</div>
+            <div class="muted tiny">RERA: ${p.rera || 'N/A'}</div>
+            <div class="cta">
+              <button class="view" onclick="viewDetails('${p.id}')">View Details</button>
+              <button class="enquiry" onclick="enquire('${p.id}')">Enquire</button>
+            </div>
+          </div>
+        `;
+        grid.appendChild(card);
+      });
+    }
+
+    /* initial render */
+    renderList(PROPS);
+
+    /* filters apply */
+    document.getElementById('applyBtn').addEventListener('click', applyFilters);
+    document.getElementById('btnSearch').addEventListener('click', applyFilters);
+    document.getElementById('clearBtn').addEventListener('click', ()=>{
+      document.getElementById('typeFilter').value=''; document.getElementById('configFilter').value=''; stateSel.value=''; citySel.innerHTML='<option value="">Select City</option>'; localitySel.innerHTML='<option value="">Locality</option>'; budgetInput && (budgetInput.value=500); document.getElementById('budgetChip').textContent='₹ 500L+'; document.getElementById('quickSearch').value=''; renderList(PROPS);
+    });
+
+    function applyFilters(){
+      const q = document.getElementById('quickSearch').value.trim().toLowerCase();
+      const state = stateSel.value; const city = citySel.value; const locality = localitySel.value;
+      const type = document.getElementById('typeFilter').value; const config = document.getElementById('configFilter').value;
+      const maxBudgetLakhs = Number(budgetInput ? budgetInput.value : 500);
+
+      let filtered = PROPS.filter(p=>{
+        if(state && p.state !== state) return false;
+        if(city && p.city !== city) return false;
+        if(locality && p.locality !== locality) return false;
+        if(type && p.type !== type) return false;
+        if(config && p.config !== config) return false;
+        if(p.price_thousands && (p.price_thousands/1000) > maxBudgetLakhs) return false;
+        if(q){ const hay = (p.title + ' ' + p.builder + ' ' + p.locality + ' ' + (p.rera||'')).toLowerCase(); if(!hay.includes(q)) return false; }
+        return true;
+      });
+
+      const sort = document.getElementById('sortSelect').value;
+      if(sort === 'price-asc') filtered.sort((a,b)=>a.price_thousands - b.price_thousands);
+      if(sort === 'price-desc') filtered.sort((a,b)=>b.price_thousands - a.price_thousands);
+      if(sort === 'new') filtered.sort((a,b)=> b.id.localeCompare(a.id));
+      renderList(filtered);
+    }
+
+    /* modal & actions */
+    const modalBackdrop = document.getElementById('modalBackdrop'); const modal = document.getElementById('modal');
+    function openModal(html){ modal.innerHTML = html; modalBackdrop.style.display = 'flex'; modalBackdrop.setAttribute('aria-hidden','false'); }
+    function closeModal(){ modalBackdrop.style.display = 'none'; modal.innerHTML = ''; modalBackdrop.setAttribute('aria-hidden','true'); }
+    modalBackdrop.addEventListener('click', (e)=> { if(e.target === modalBackdrop) closeModal(); });
+    document.addEventListener('keydown', e=> { if(e.key === 'Escape') closeModal(); });
+
+    function isLoggedIn(){ return !!localStorage.getItem('pp_demo_token'); }
+
+    document.getElementById('btn-login').addEventListener('click', ()=> { if(isLoggedIn()){ if(confirm('Logout?')){ localStorage.removeItem('pp_demo_token'); location.reload(); } } else showLogin(); });
+    document.getElementById('btn-signup').addEventListener('click', ()=> showLogin());
+
+    function showLogin(after){
+      openModal(`
+        <div style="display:flex;flex-direction:column;gap:10px">
+          <h3>Sign in</h3>
+          <input id="liEmail" placeholder="Email or phone" style="padding:10px;border-radius:8px;border:1px solid #eef2f6">
+          <input id="liPass" type="password" placeholder="Password" style="padding:10px;border-radius:8px;border:1px solid #eef2f6">
+          <div style="display:flex;gap:8px;justify-content:flex-end">
+            <button onclick="closeModal()" style="padding:10px;border-radius:8px;border:1px solid #eef2f6">Cancel</button>
+            <button onclick="doLogin()" style="padding:10px;border-radius:8px;background:var(--primary);color:#fff">Sign in</button>
+          </div>
+          <div style="font-size:13px;color:var(--muted)">Demo login: any values will work (local token stored). Replace with API call to backend for production.</div>
+        </div>
+      `);
+      window.doLogin = function(){ const em = document.getElementById('liEmail').value || 'demo@pp.com'; localStorage.setItem('pp_demo_token', btoa(em + '|' + Date.now())); alert('Logged in as ' + em); closeModal(); if(typeof after === 'function') after(); }
+    }
+
+    function viewDetails(id){
+      const p = PROPS.find(x=>x.id === id);
+      if(!p) return alert('Property not found');
+
+      const imgThumbs = p.images.map((img,i)=>`<img src="${img}" data-src="${img}" onclick="switchImg(this)" class="${i===0?'active':''}" />`).join('');
+
+      openModal(`
+        <div>
+          <div style="display:flex;gap:16px;flex-wrap:wrap">
+            <div style="flex:1;min-width:260px">
+              <div class="gallery" style="align-items:flex-start">
+                <div class="main"><img id="mainImg" src="${p.images[0]}" style="width:100%;height:320px;object-fit:cover;border-radius:8px" /></div>
+                <div class="thumbs">${imgThumbs}</div>
+              </div>
+            </div>
+            <div style="width:320px;min-width:220px">
+              <h3 style="margin:0">${p.title}</h3>
+              <div style="color:var(--muted);margin-top:6px">${p.builder} • ${p.locality}, ${p.city}</div>
+              <div style="margin-top:12px;font-weight:800;font-size:18px">${p.type} • ₹ ${formatPrice(p.price_thousands)}</div>
+              <div style="margin-top:8px;color:var(--muted)">Size: ${p.size} • ${p.config}</div>
+
+              <div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap">
+                <button class="btn" style="flex:1;border:1px solid #eef2f6" onclick="contactBuilder('${p.builder}')">Contact Builder</button>
+                <button class="btn" style="flex:1;background:var(--accent);font-weight:700" onclick="downloadBrochure('${p.id}')">Download Brochure</button>
+              </div>
+
+              <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap">
+                <button class="btn" style="flex:1;border:1px solid #eef2f6" onclick="bookCab('${p.id}')">Book Cab for Site Visit</button>
+                <button class="btn" style="flex:1;border:1px solid #eef2f6" onclick="applyOffer('${p.id}')">Avail New Offer</button>
+              </div>
+
+              <div style="margin-top:10px;color:var(--muted);font-size:13px">RERA: <strong>${p.rera || 'N/A'}</strong></div>
+
+            </div>
+          </div>
+
+          <div class="section-box">
+            <h4>Location</h4>
+            <p>${p.locality}, ${p.city}, ${p.state}</p>
+            <div style="margin-top:8px;border-radius:8px;overflow:hidden">
+              <iframe loading="lazy" width="100%" height="220" style="border:0" referrerpolicy="no-referrer-when-downgrade" src="https://www.google.com/maps?q=${encodeURIComponent(p.locality + ', ' + p.city + ', ' + p.state)}&output=embed"></iframe>
+            </div>
+          </div>
+
+          <div class="section-box"><h4>About this project</h4><p>${p.usp || p.description || 'Premium project by ' + p.builder + '. Contact builder for full specification.'}</p></div>
+
+          <div class="section-box"><h4>Offers</h4><p>${p.offers || 'Contact us for current offers and flexible payment options.'}</p></div>
+
+          <div class="section-box"><h4>Our USP</h4><p>Branded builders only • Transparent pricing • Verified inventory • Priority site visits • Dedicated RM.</p></div>
+
+          <div class="section-box"><h4>Cab Services</h4><p>Door-to-door cab for confirmed site visits (subject to availability). Book a cab and we'll confirm within 24 hours.</p></div>
+
+          <div class="section-box"><h4>Special Inventory Options</h4><p>Investor-ready, priority allotments, exchange offers and negotiated pricing on bulk purchases.</p></div>
+
+          <div class="section-box"><h4>Gifts</h4><p>Booking gifts & home appliances available for select projects — T&amp;C apply.</p></div>
+
+          <div style="display:flex;justify-content:flex-end;margin-top:12px"><button onclick="closeModal()" style="padding:8px 12px;border-radius:8px;border:1px solid #eef2f6">Close</button></div>
+        </div>
+      `);
+    }
+
+    window.switchImg = function(el){ document.getElementById('mainImg').src = el.dataset.src; document.querySelectorAll('.thumbs img').forEach(i=>i.classList.remove('active')); el.classList.add('active'); }
+
+    function contactBuilder(builder){ alert('Contact request sent to ' + builder + ' (demo).'); }
+    function bookCab(id){ if(!isLoggedIn()) return showLogin(()=>bookCab(id)); alert('Cab booking requested for ' + id + ' (demo). Our team will confirm.'); }
+    function applyOffer(id){ if(!isLoggedIn()) return showLogin(()=>applyOffer(id)); alert('Offer request submitted for ' + id + ' (demo).'); }
+
+    function enquire(id){ if(!isLoggedIn()) return showLogin(()=>enquire(id)); const p = PROPS.find(x=>x.id===id); const phone = prompt('Enter your phone number to enquire about ' + p.title); if(phone) alert('Enquiry submitted. Builder will contact you (demo).'); }
+
+    function downloadBrochure(id){ if(!isLoggedIn()) return showLogin(()=>downloadBrochure(id)); const p = PROPS.find(x=>x.id===id); if(!p) return alert('Not found');
+      // In production, replace this with authenticated API call returning PDF/BROCHURE
+      const csv = [["Title","Builder","Location","City","State","Config","Size","Price(thousands)","RERA","Amenities"],[p.title,p.builder,p.locality,p.city,p.state,p.config,p.size,p.price_thousands,(p.rera||''),(p.amenities ? p.amenities.join('; ') : '')]].map(r=>r.map(c=>`"${String(c).replace(/"/g,'""')}"`).join(',')).join('\n');
+      const blob = new Blob([csv],{type:'text/csv'}); const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = url; a.download = `${p.builder}_${p.id}_brochure.csv`; document.body.appendChild(a); a.click(); a.remove(); closeModal(); }
+
+    /* Notes for integration (backend) - replace demo arrays with API responses and secure auth */
+  </script>
+</body>
+</html>
